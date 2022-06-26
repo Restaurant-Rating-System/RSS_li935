@@ -49,8 +49,13 @@ public class RatingSystem {
                         ratingList.add(appendRatingList(columns));
                         break;
                     case 3:
-                        ratingList.remove(removeRatingList(ratingList, columns));
-                        index--;
+                        try {
+                            ratingList.remove(removeRatingList(ratingList, columns));
+                            sortingRatingList(ratingList);
+                            index--;
+                        } catch (IndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 4:
                         System.out.println("수정");
@@ -172,6 +177,13 @@ public class RatingSystem {
                 });
     }
 
+    // TODO: 자료구조를 Linked List로 변경할 필요성이 있음.
+    private void sortingRatingList(List<RatingDTO> ratingList) {
+        for (int i = 0; i < ratingList.size(); i++) {
+            ratingList.get(i).setId((long) i + 1);
+        }
+    }
+
     RatingDTO appendRatingList(String[] columns) {
         RatingDTO ratingDTO = new RatingDTO();
 
@@ -200,7 +212,6 @@ public class RatingSystem {
         method.invoke(ratingDTO, br.readLine());
     }
 
-    // TODO: 사후 정렬처리 필요
     int removeRatingList(List<RatingDTO> ratingList, String[] columns) throws Exception {
         showRatingList(ratingList, columns);
 
