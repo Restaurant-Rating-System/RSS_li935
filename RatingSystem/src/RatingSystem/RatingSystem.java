@@ -107,18 +107,25 @@ public class RatingSystem {
         String row;
 
         while ((row = br.readLine()) != null) {
-            if (ratingDTO.isFilled()) {
-                ratingList.add(ratingDTO);
-                ratingDTO.reset();
-            }
-
-            // TODO: 불필요한 순회가 들어감. 개선 가능하므로 개선 예정
             for (String column : columns) {
                 if (row.contains(column)) {
-                    Method method = RatingDTO.class.getDeclaredMethod("set" + new ColumnUtil(column).getCamelCaseColumn(), String.class);
-                    method.setAccessible(true);
-                    method.invoke(ratingDTO, row.split(":")[1].trim());
+                    if (row.contains("id")) {
+                        Method method = RatingDTO.class.getDeclaredMethod("set" + new ColumnUtil(column).getCamelCaseColumn(), Long.class);
+                        method.setAccessible(true);
+                        method.invoke(ratingDTO, Long.parseLong(row.split(":")[1].trim()));
+                    } else {
+                        Method method = RatingDTO.class.getDeclaredMethod("set" + new ColumnUtil(column).getCamelCaseColumn(), String.class);
+                        method.setAccessible(true);
+                        method.invoke(ratingDTO, row.split(":")[1].trim());
+                    }
+
+                    break;
                 }
+            }
+
+            if (ratingDTO.getUpdateAt() != null) {
+                ratingList.add(ratingDTO);
+                ratingDTO = new RatingDTO();
             }
         }
 
